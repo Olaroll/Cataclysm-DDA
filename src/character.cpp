@@ -3052,13 +3052,17 @@ units::mass Character::weight_capacity() const
 bool Character::can_pickVolume( const item &it, bool, const item *avoid,
                                 const bool ignore_pkt_settings ) const
 {
+    DebugLog( D_INFO, DC_ALL ) << "Character::can_pickVolume";
     if( ( avoid == nullptr || &weapon != avoid ) &&
         weapon.can_contain( it, false, false, ignore_pkt_settings ).success() ) {
+        DebugLog( D_INFO, DC_ALL ) << "Character::can_pickVolumeA";
         return true;
     }
     if( worn.can_pickVolume( it, ignore_pkt_settings ) ) {
+        DebugLog( D_INFO, DC_ALL ) << "Character::can_pickVolumeB";
         return true;
     }
+    DebugLog( D_INFO, DC_ALL ) << "Character::can_pickVolumeC";
     return false;
 }
 

@@ -1401,6 +1401,7 @@ ret_val<item_pocket::contain_code> item_pocket::is_compatible( const item &it ) 
 
 ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) const
 {
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_contain";
     ret_val<item_pocket::contain_code> compatible = is_compatible( it );
 
     if( data->type == item_pocket::pocket_type::CORPSE ) {
@@ -1408,15 +1409,18 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         // we simply don't want them to "spill"
         return ret_val<item_pocket::contain_code>::make_success();
     }
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containA";
     // To prevent debugmsg. Casings can only be inserted in a magazine during firing.
     if( data->type == item_pocket::pocket_type::MAGAZINE && it.has_flag( flag_CASING ) ) {
         return ret_val<item_pocket::contain_code>::make_success();
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containB";
     if( !compatible.success() ) {
         return compatible;
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containC";
     if( data->type == item_pocket::pocket_type::MAGAZINE && !empty() ) {
         for( const item &contained : contents ) {
             if( contained.has_flag( flag_CASING ) ) {
@@ -1428,6 +1432,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         }
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containD";
     if( data->ablative && !contents.empty() ) {
         if( contents.front().can_combine( it ) ) {
             return ret_val<item_pocket::contain_code>::make_success();
@@ -1437,6 +1442,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         }
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containE";
     if( data->ablative ) {
         if( it.is_rigid() ) {
             for( const sub_bodypart_id &sbp : it.get_covered_sub_body_parts() ) {
@@ -1451,6 +1457,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         return ret_val<item_pocket::contain_code>::make_success();
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containF";
     if( data->holster && !contents.empty() ) {
         if( contents.front().can_combine( it ) ) {
             return ret_val<item_pocket::contain_code>::make_success();
@@ -1460,6 +1467,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         }
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containG";
     if( it.made_of( phase_id::LIQUID ) ) {
         if( size() != 0 && !contents.front().can_combine( it ) && data->watertight ) {
             return ret_val<item_pocket::contain_code>::make_failure(
@@ -1471,6 +1479,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
                    contain_code::ERR_LIQUID, _( "can't put non liquid into pocket with liquid" ) );
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containH";
     if( it.is_frozen_liquid() ) {
         if( size() != 0 && !contents.front().can_combine( it ) && data->watertight ) {
             return ret_val<item_pocket::contain_code>::make_failure(
@@ -1485,6 +1494,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         }
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containI";
     if( it.made_of( phase_id::GAS ) ) {
         if( size() != 0 && !contents.front().can_combine( it ) ) {
             return ret_val<item_pocket::contain_code>::make_failure(
@@ -1495,6 +1505,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
                    contain_code::ERR_GAS, _( "can't put non gas into pocket with gas" ) );
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containJ";
     if( !data->ammo_restriction.empty() ) {
         const ammotype it_ammo = it.ammo_type();
         if( it.count() > remaining_ammo_capacity( it_ammo ) ) {
@@ -1505,22 +1516,27 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         return ret_val<item_pocket::contain_code>::make_success();
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containK";
     if( it.weight() > weight_capacity() ) {
         return ret_val<item_pocket::contain_code>::make_failure(
                    contain_code::ERR_TOO_HEAVY, _( "item is too heavy" ) );
     }
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containL";
     if( it.weight() > 0_gram && charges_per_remaining_weight( it ) < it.count() ) {
         return ret_val<item_pocket::contain_code>::make_failure(
                    contain_code::ERR_CANNOT_SUPPORT, _( "pocket is holding too much weight" ) );
     }
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containM";
     if( it.volume() > volume_capacity() ) {
         return ret_val<item_pocket::contain_code>::make_failure(
                    contain_code::ERR_TOO_BIG, _( "item too big" ) );
     }
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containN";
     if( it.volume() > 0_ml && charges_per_remaining_volume( it ) < it.count() ) {
         return ret_val<item_pocket::contain_code>::make_failure(
                    contain_code::ERR_NO_SPACE, _( "not enough space" ) );
     }
+    DebugLog( D_INFO, DC_ALL ) << "item_pocket::can_containO";
     return ret_val<item_pocket::contain_code>::make_success();
 }
 

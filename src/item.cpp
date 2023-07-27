@@ -9829,52 +9829,64 @@ ret_val<void> item::can_contain( const item &it, const bool nested, const bool i
                                  const bool ignore_pkt_settings, const item_location &parent_it,
                                  units::volume remaining_parent_volume, const bool allow_nested ) const
 {
+    DebugLog( D_INFO, DC_ALL ) << "item::can_contain";
     if( this == &it || ( parent_it.where() != item_location::type::invalid &&
                          this == parent_it.get_item() ) ) {
         // does the set of all sets contain itself?
         // or does this already contain it?
         return ret_val<void>::make_failure();
     }
+    DebugLog( D_INFO, DC_ALL ) << "item::can_containA";
     if( nested && !this->is_container() ) {
         return ret_val<void>::make_failure();
     }
+    DebugLog( D_INFO, DC_ALL ) << "item::can_containB";
     // disallow putting portable holes into bags of holding
     if( contents.bigger_on_the_inside( volume() ) &&
         it.contents.bigger_on_the_inside( it.volume() ) ) {
         return ret_val<void>::make_failure();
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item::can_containD";
     if( allow_nested ) {
         for( const item_pocket *pkt : contents.get_all_contained_pockets() ) {
+            DebugLog( D_INFO, DC_ALL ) << "item::can_containX";
             if( pkt->empty() ) {
                 continue;
             }
 
+            DebugLog( D_INFO, DC_ALL ) << "item::can_containY";
             // early exit for max length no nested item is gonna fix this
             if( pkt->max_containable_length() < it.length() ) {
                 continue;
             }
 
+            DebugLog( D_INFO, DC_ALL ) << "item::can_containZ";
             // If the current pocket has restrictions or blacklists the item,
             // try the nested pocket regardless of whether it's soft or rigid.
             const bool ignore_nested_rigidity =
                 !pkt->settings.accepts_item( it ) ||
                 !pkt->get_pocket_data()->get_flag_restrictions().empty();
             for( const item *internal_it : pkt->all_items_top() ) {
+                DebugLog( D_INFO, DC_ALL ) << "item::can_contain1";
                 if( parent_it.where() != item_location::type::invalid && internal_it == parent_it.get_item() ) {
                     continue;
                 }
+                DebugLog( D_INFO, DC_ALL ) << "item::can_contain2";
                 if( !internal_it->is_container() ) {
                     continue;
                 }
+                DebugLog( D_INFO, DC_ALL ) << "item::can_contain3";
                 if( internal_it->can_contain( it, true, ignore_nested_rigidity, ignore_pkt_settings,
                                               parent_it, pkt->remaining_volume() ).success() ) {
                     return ret_val<void>::make_success();
                 }
+                DebugLog( D_INFO, DC_ALL ) << "item::can_contain4";
             }
         }
     }
 
+    DebugLog( D_INFO, DC_ALL ) << "item::can_containE";
     return nested && !ignore_rigidity ?
            contents.can_contain_rigid( it, ignore_pkt_settings ) :
            contents.can_contain( it, ignore_pkt_settings, remaining_parent_volume );

@@ -1776,6 +1776,7 @@ void outfit::add_dependent_item( std::list<item *> &dependent, const item &it )
 
 bool outfit::can_pickVolume( const item &it, const bool ignore_pkt_settings ) const
 {
+    DebugLog( D_INFO, DC_ALL ) << "outfit::can_pickVolume";
     for( const item &w : worn ) {
         if( w.can_contain( it, false, false, ignore_pkt_settings ).success() ) {
             return true;

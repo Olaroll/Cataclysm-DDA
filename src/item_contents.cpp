@@ -1037,28 +1037,36 @@ ret_val<void> item_contents::can_contain_rigid( const item &it,
 ret_val<void> item_contents::can_contain( const item &it, const bool ignore_pkt_settings,
         units::volume remaining_parent_volume ) const
 {
+    DebugLog( D_INFO, DC_ALL ) << "item_contents::can_contain";
     ret_val<void> ret = ret_val<void>::make_failure( _( "is not a container" ) );
     for( const item_pocket &pocket : contents ) {
+        DebugLog( D_INFO, DC_ALL ) << "item_contents::can_containA";
         if( pocket.is_forbidden() ) {
             continue;
         }
+        DebugLog( D_INFO, DC_ALL ) << "item_contents::can_containB";
         // mod, migration, corpse, and software aren't regular pockets.
         if( !pocket.is_standard_type() ) {
             continue;
         }
+        DebugLog( D_INFO, DC_ALL ) << "item_contents::can_containC";
         if( !ignore_pkt_settings && !pocket.settings.accepts_item( it ) ) {
             ret = ret_val<void>::make_failure( _( "denied by pocket auto insert settings" ) );
             continue;
         }
+        DebugLog( D_INFO, DC_ALL ) << "item_contents::can_containD";
         if( !pocket.rigid() && it.volume() > remaining_parent_volume ) {
             continue;
         }
+        DebugLog( D_INFO, DC_ALL ) << "item_contents::can_containE";
         const ret_val<item_pocket::contain_code> pocket_contain_code = pocket.can_contain( it );
         if( pocket_contain_code.success() ) {
             return ret_val<void>::make_success();
         }
+        DebugLog( D_INFO, DC_ALL ) << "item_contents::can_containF";
         ret = ret_val<void>::make_failure( pocket_contain_code.str() );
     }
+    DebugLog( D_INFO, DC_ALL ) << "item_contents::can_contain END";
     return ret;
 }
 
